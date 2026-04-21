@@ -44,9 +44,6 @@ export async function AppHeader() {
               <span className="hidden text-sm text-muted-foreground sm:inline">
                 {user.email}
               </span>
-              <Link href="/dashboard" className={buttonVariants()}>
-                Open app
-              </Link>
             </>
           ) : (
             <>

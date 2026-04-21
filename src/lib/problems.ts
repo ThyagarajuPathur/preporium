@@ -1,8 +1,12 @@
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
 
 import { allProblems, problemDays } from "@/lib/problem-data";
+import { createAnonSupabase } from "@/lib/supabase/anon";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { hasSupabaseEnv } from "@/lib/supabase/env";
+
+export const PROBLEM_CATALOG_TAG = "problem-catalog";
 import type {
   Difficulty,
   Problem,
@@ -50,26 +54,41 @@ function mapProblemRow(row: ProblemRow): Problem {
   };
 }
 
+// Persisted across requests via Next's data cache. The catalog is public,
+// read-only data, so we use a cookie-less Supabase client (cookies are not
+// allowed inside the cache scope). Invalidate with
+// `revalidateTag(PROBLEM_CATALOG_TAG, 'max')` when catalog rows change.
+const fetchProblemCatalogRows = unstable_cache(
+  async () => {
+    const supabase = createAnonSupabase();
+    const { data } = await supabase
+      .from("problems")
+      .select(
+        "id, day_number, day_order, topic, focus, title, leetcode_number, slug, url, difficulty, pattern, path_name",
+      )
+      .eq("is_active", true)
+      .order("day_number", { ascending: true })
+      .order("day_order", { ascending: true });
+
+    return (data ?? null) as ProblemRow[] | null;
+  },
+  ["problem-catalog"],
+  { tags: [PROBLEM_CATALOG_TAG] },
+);
+
+// Per-render dedupe on top of the cross-request data cache.
 export const getProblemCatalog = cache(async () => {
   if (!hasSupabaseEnv()) {
     return allProblems;
   }
 
-  const supabase = await createServerSupabase();
-  const { data } = await supabase
-    .from("problems")
-    .select(
-      "id, day_number, day_order, topic, focus, title, leetcode_number, slug, url, difficulty, pattern, path_name",
-    )
-    .eq("is_active", true)
-    .order("day_number", { ascending: true })
-    .order("day_order", { ascending: true });
+  const rows = await fetchProblemCatalogRows();
 
-  if (!data?.length) {
+  if (!rows?.length) {
     return allProblems;
   }
 
-  return data.map(mapProblemRow);
+  return rows.map(mapProblemRow);
 });
 
 export function buildProblemDays<TProblem extends Problem>(

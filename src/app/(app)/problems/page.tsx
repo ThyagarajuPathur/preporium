@@ -3,18 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getWorkspaceProblems } from "@/lib/problems";
 import { getRequiredSession } from "@/lib/session";
 
-export default async function ProblemsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{
-    search?: string;
-    difficulty?: string;
-    status?: string;
-    topic?: string;
-    day?: string;
-  }>;
-}) {
-  const params = await searchParams;
+export default async function ProblemsPage() {
   const session = await getRequiredSession();
   const problems = await getWorkspaceProblems(session?.user.id ?? null);
 
@@ -31,16 +20,7 @@ export default async function ProblemsPage({
           solve state, then jump directly to LeetCode when you are ready.
         </CardContent>
       </Card>
-      <ProblemExplorer
-        problems={problems}
-        filters={{
-          search: params.search ?? "",
-          difficulty: params.difficulty ?? "",
-          status: params.status ?? "",
-          topic: params.topic ?? "",
-          day: params.day ?? "",
-        }}
-      />
+      <ProblemExplorer problems={problems} />
     </div>
   );
 }

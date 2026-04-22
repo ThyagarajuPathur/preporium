@@ -4,13 +4,9 @@ import Link from "next/link";
 import {
   useCallback,
   useDeferredValue,
-  useEffect,
   useMemo,
-  useRef,
   useState,
-  useTransition,
 } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ExternalLink, Search } from "lucide-react";
 
 import { ProgressSelect } from "@/components/app/progress-select";
@@ -36,14 +32,6 @@ import {
 import type { ProblemWithProgress } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-type Filters = {
-  search: string;
-  difficulty: string;
-  topic: string;
-  status: string;
-  day: string;
-};
-
 const DIFFICULTY_OPTIONS = [
   { value: "all", label: "All difficulties" },
   { value: "Easy", label: "Easy" },
@@ -67,35 +55,32 @@ const DAY_OPTIONS = [
   })),
 ] as const;
 
-const SEARCH_DEBOUNCE_MS = 250;
-
 function normalize(value: string) {
   return value.toLowerCase().trim();
 }
 
 export function ProblemExplorer({
   problems,
-  filters,
 }: {
   problems: ProblemWithProgress[];
-  filters: Filters;
 }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
-  const [localSearch, setLocalSearch] = useState(filters.search);
-  const deferredSearch = useDeferredValue(localSearch);
+  const [search, setSearch] = useState("");
+  const [difficulty, setDifficulty] = useState("all");
+  const [status, setStatus] = useState("all");
+  const [day, setDay] = useState("all");
+  const [topic, setTopic] = useState("all");
+
+  const deferredSearch = useDeferredValue(search);
 
   const topics = useMemo(
-    () => Array.from(new Set(problems.map((problem) => problem.topic))).sort(),
+    () => Array.from(new Set(problems.map((p) => p.topic))).sort(),
     [problems],
   );
 
   const topicOptions = useMemo(
     () => [
       { value: "all", label: "All topics" },
-      ...topics.map((topic) => ({ value: topic, label: topic })),
+      ...topics.map((t) => ({ value: t, label: t })),
     ],
     [topics],
   );
@@ -103,16 +88,11 @@ export function ProblemExplorer({
   const normalizedSearch = useMemo(() => normalize(deferredSearch), [deferredSearch]);
 
   const filtered = useMemo(() => {
-    const difficulty = filters.difficulty && filters.difficulty !== "all" ? filters.difficulty : null;
-    const topic = filters.topic && filters.topic !== "all" ? filters.topic : null;
-    const status = filters.status && filters.status !== "all" ? filters.status : null;
-    const day = filters.day && filters.day !== "all" ? filters.day : null;
-
     return problems.filter((problem) => {
-      if (difficulty && problem.difficulty !== difficulty) return false;
-      if (topic && problem.topic !== topic) return false;
-      if (status && problem.status !== status) return false;
-      if (day && String(problem.dayNumber) !== day) return false;
+      if (difficulty !== "all" && problem.difficulty !== difficulty) return false;
+      if (topic !== "all" && problem.topic !== topic) return false;
+      if (status !== "all" && problem.status !== status) return false;
+      if (day !== "all" && String(problem.dayNumber) !== day) return false;
       if (
         normalizedSearch &&
         !normalize(problem.title).includes(normalizedSearch) &&
@@ -122,69 +102,12 @@ export function ProblemExplorer({
       }
       return true;
     });
-  }, [
-    filters.day,
-    filters.difficulty,
-    filters.status,
-    filters.topic,
-    normalizedSearch,
-    problems,
-  ]);
+  }, [difficulty, topic, status, day, normalizedSearch, problems]);
 
-  const searchParamsString = searchParams.toString();
-
-  const pushFilters = useCallback(
-    (next: Partial<Filters>) => {
-      const params = new URLSearchParams(searchParamsString);
-
-      for (const [key, value] of Object.entries(next)) {
-        if (!value || value === "all") {
-          params.delete(key);
-        } else {
-          params.set(key, value);
-        }
-      }
-
-      const query = params.toString();
-      startTransition(() => {
-        router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
-      });
-    },
-    [pathname, router, searchParamsString],
-  );
-
-  // Debounce search -> URL so typing doesn't spam history replace. Selects are
-  // rare events and go through pushFilters directly.
-  const isFirstSearchRender = useRef(true);
-  useEffect(() => {
-    if (isFirstSearchRender.current) {
-      isFirstSearchRender.current = false;
-      return;
-    }
-
-    const handle = setTimeout(() => {
-      pushFilters({ search: localSearch });
-    }, SEARCH_DEBOUNCE_MS);
-
-    return () => clearTimeout(handle);
-  }, [localSearch, pushFilters]);
-
-  const onDifficultyChange = useCallback(
-    (value: string) => pushFilters({ difficulty: value }),
-    [pushFilters],
-  );
-  const onStatusChange = useCallback(
-    (value: string) => pushFilters({ status: value }),
-    [pushFilters],
-  );
-  const onDayChange = useCallback(
-    (value: string) => pushFilters({ day: value }),
-    [pushFilters],
-  );
-  const onTopicChange = useCallback(
-    (value: string) => pushFilters({ topic: value }),
-    [pushFilters],
-  );
+  const onDifficultyChange = useCallback((v: string) => setDifficulty(v), []);
+  const onStatusChange = useCallback((v: string) => setStatus(v), []);
+  const onDayChange = useCallback((v: string) => setDay(v), []);
+  const onTopicChange = useCallback((v: string) => setTopic(v), []);
 
   return (
     <div className="flex flex-col gap-6">
@@ -192,33 +115,33 @@ export function ProblemExplorer({
         <div className="relative">
           <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input
-            value={localSearch}
-            onChange={(event) => setLocalSearch(event.target.value)}
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
             placeholder="Search title or LC number"
             className="h-12 rounded-2xl border-border/60 bg-background pl-11"
             aria-label="Search problems"
           />
         </div>
         <FilterSelect
-          value={filters.difficulty || "all"}
+          value={difficulty}
           onChange={onDifficultyChange}
           placeholder="Difficulty"
           options={DIFFICULTY_OPTIONS}
         />
         <FilterSelect
-          value={filters.status || "all"}
+          value={status}
           onChange={onStatusChange}
           placeholder="Status"
           options={STATUS_OPTIONS}
         />
         <FilterSelect
-          value={filters.day || "all"}
+          value={day}
           onChange={onDayChange}
           placeholder="Day"
           options={DAY_OPTIONS}
         />
         <FilterSelect
-          value={filters.topic || "all"}
+          value={topic}
           onChange={onTopicChange}
           placeholder="Topic"
           options={topicOptions}
@@ -286,9 +209,7 @@ export function ProblemExplorer({
             {!filtered.length ? (
               <TableRow>
                 <TableCell colSpan={7} className="py-12 text-center text-muted-foreground">
-                  {isPending
-                    ? "Refreshing the filtered list..."
-                    : "No problems match the current filters."}
+                  No problems match the current filters.
                 </TableCell>
               </TableRow>
             ) : null}
@@ -311,10 +232,7 @@ function FilterSelect({ value, onChange, placeholder, options }: FilterSelectPro
     <Select
       value={value}
       onValueChange={(nextValue) => {
-        if (!nextValue) {
-          return;
-        }
-
+        if (!nextValue) return;
         onChange(nextValue);
       }}
     >

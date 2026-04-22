@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 
@@ -37,7 +38,7 @@ function deriveAvatarUrl(user: User): string | null {
   return typeof metadata?.avatar_url === "string" ? metadata.avatar_url : null;
 }
 
-export async function ensureProfile() {
+export const ensureProfile = cache(async () => {
   const user = await getOptionalUser();
 
   if (!user) {
@@ -80,7 +81,7 @@ export async function ensureProfile() {
     .single<ProfileRow>();
 
   return { user, profile: created ?? inserted };
-}
+});
 
 export async function getRequiredSession() {
   if (!hasSupabaseEnv()) {

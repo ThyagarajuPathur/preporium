@@ -118,7 +118,7 @@ export async function getProblemDays() {
   return buildProblemDays(catalog);
 }
 
-export async function getUserProgress(userId: string) {
+export const getUserProgress = cache(async (userId: string) => {
   if (!hasSupabaseEnv()) {
     return [] satisfies UserProgress[];
   }
@@ -134,7 +134,7 @@ export async function getUserProgress(userId: string) {
     status: item.status,
     lastUpdatedAt: item.updated_at,
   }));
-}
+});
 
 export async function getWorkspaceProblems(userId: string | null) {
   const [catalog, progress] = await Promise.all([

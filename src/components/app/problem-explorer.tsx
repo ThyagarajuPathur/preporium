@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import {
-  useCallback,
   useDeferredValue,
   useMemo,
   useState,
@@ -104,10 +103,6 @@ export function ProblemExplorer({
     });
   }, [difficulty, topic, status, day, normalizedSearch, problems]);
 
-  const onDifficultyChange = useCallback((v: string) => setDifficulty(v), []);
-  const onStatusChange = useCallback((v: string) => setStatus(v), []);
-  const onDayChange = useCallback((v: string) => setDay(v), []);
-  const onTopicChange = useCallback((v: string) => setTopic(v), []);
 
   return (
     <div className="flex flex-col gap-6">
@@ -124,25 +119,25 @@ export function ProblemExplorer({
         </div>
         <FilterSelect
           value={difficulty}
-          onChange={onDifficultyChange}
+          onChange={setDifficulty}
           placeholder="Difficulty"
           options={DIFFICULTY_OPTIONS}
         />
         <FilterSelect
           value={status}
-          onChange={onStatusChange}
+          onChange={setStatus}
           placeholder="Status"
           options={STATUS_OPTIONS}
         />
         <FilterSelect
           value={day}
-          onChange={onDayChange}
+          onChange={setDay}
           placeholder="Day"
           options={DAY_OPTIONS}
         />
         <FilterSelect
           value={topic}
-          onChange={onTopicChange}
+          onChange={setTopic}
           placeholder="Topic"
           options={topicOptions}
         />

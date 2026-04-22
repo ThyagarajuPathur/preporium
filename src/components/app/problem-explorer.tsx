@@ -103,7 +103,6 @@ export function ProblemExplorer({
     });
   }, [difficulty, topic, status, day, normalizedSearch, problems]);
 
-
   return (
     <div className="flex flex-col gap-6">
       <div className="grid gap-3 lg:grid-cols-[1.2fr_repeat(4,minmax(0,1fr))]">

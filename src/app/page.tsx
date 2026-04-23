@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { ArrowRight, CalendarRange, ChartColumnIncreasing, Filter } from "lucide-react";
 
 import { BrandMark } from "@/components/app/brand-mark";
 import { buttonVariants } from "@/components/ui/button";
 import { BRAND } from "@/lib/brand";
+import { getOptionalUser } from "@/lib/session";
 import { cn } from "@/lib/utils";
 
 const featureRows = [
@@ -24,7 +26,12 @@ const featureRows = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const user = await getOptionalUser();
+  if (user) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col px-4 pb-20 pt-10 sm:px-6 lg:px-8">
       <section className="grid min-h-[calc(100svh-7rem)] items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">

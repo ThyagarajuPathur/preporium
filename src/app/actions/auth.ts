@@ -162,6 +162,7 @@ export async function signInWithGoogleAction() {
     provider: "google",
     options: {
       redirectTo: `${siteUrl}/auth/callback?next=/dashboard`,
+      queryParams: { prompt: "select_account" },
     },
   });
 

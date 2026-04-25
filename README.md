@@ -1,4 +1,4 @@
-# Preporax MVP
+# Preporium MVP
 
 Modern LeetCode prep tracker built with Next.js and Supabase.
 

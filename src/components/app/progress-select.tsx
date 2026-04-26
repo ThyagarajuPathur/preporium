@@ -7,12 +7,16 @@ import { updateProgressAction } from "@/app/actions/progress";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { ProgressStatus } from "@/lib/types";
 
-const options: Array<{ value: ProgressStatus; label: string }> = [
-  { value: "not_started", label: "Not started" },
-  { value: "in_progress", label: "In progress" },
-  { value: "solved", label: "Solved" },
-  { value: "revisit", label: "Revisit" },
-];
+const labelByStatus: Record<ProgressStatus, string> = {
+  not_started: "Not started",
+  in_progress: "In progress",
+  solved: "Solved",
+  revisit: "Revisit",
+};
+
+const options: Array<{ value: ProgressStatus; label: string }> = (
+  Object.entries(labelByStatus) as Array<[ProgressStatus, string]>
+).map(([value, label]) => ({ value, label }));
 
 export function ProgressSelect({
   problemId,
@@ -50,7 +54,11 @@ export function ProgressSelect({
       }}
     >
       <SelectTrigger className="w-[148px] bg-background" disabled={isPending}>
-        <SelectValue placeholder="Status" />
+        <SelectValue placeholder="Status">
+          {(value) =>
+            value ? labelByStatus[value as ProgressStatus] : "Status"
+          }
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>

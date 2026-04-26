@@ -105,8 +105,8 @@ export function ProblemExplorer({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="grid gap-3 lg:grid-cols-[1.2fr_repeat(4,minmax(0,1fr))]">
-        <div className="relative">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1.2fr_repeat(4,minmax(0,1fr))]">
+        <div className="relative sm:col-span-2 lg:col-span-1">
           <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={search}

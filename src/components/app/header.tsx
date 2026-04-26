@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import { BrandMark } from "@/components/app/brand-mark";
+import { MobileNav } from "@/components/app/mobile-nav";
+import { ThemeToggle } from "@/components/app/theme-toggle";
 import { buttonVariants } from "@/components/ui/button";
 import { getOptionalUser } from "@/lib/session";
 import { cn } from "@/lib/utils";
@@ -23,7 +25,7 @@ export async function AppHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="shrink-0">
           <BrandMark />
         </Link>
@@ -38,26 +40,59 @@ export async function AppHeader() {
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <ThemeToggle />
           {user ? (
-            <>
-              <span className="hidden text-sm text-muted-foreground sm:inline">
-                {user.email}
-              </span>
-            </>
+            <span className="hidden text-sm text-muted-foreground sm:inline">
+              {user.email}
+            </span>
           ) : (
             <>
               <Link
                 href="/login"
-                className={cn(buttonVariants({ variant: "ghost" }))}
+                className={cn(
+                  buttonVariants({ variant: "ghost" }),
+                  "hidden sm:inline-flex",
+                )}
               >
                 Log in
               </Link>
-              <Link href="/signup" className={buttonVariants()}>
+              <Link
+                href="/signup"
+                className={cn(buttonVariants(), "hidden sm:inline-flex")}
+              >
                 Start free
               </Link>
             </>
           )}
+          <MobileNav
+            links={links}
+            footer={
+              user ? (
+                <span className="px-3 text-sm text-muted-foreground">
+                  {user.email}
+                </span>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className={cn(
+                      buttonVariants({ variant: "ghost" }),
+                      "w-full justify-center",
+                    )}
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className={cn(buttonVariants(), "w-full justify-center")}
+                  >
+                    Start free
+                  </Link>
+                </>
+              )
+            }
+          />
         </div>
       </div>
     </header>

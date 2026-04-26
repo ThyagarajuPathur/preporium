@@ -70,7 +70,7 @@ export default async function Home() {
           </div>
         </div>
         <div className="relative lg:justify-self-end">
-          <div className="rounded-[2rem] border border-border/60 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(248,245,240,0.92))] p-6 shadow-[0_30px_100px_rgba(15,23,42,0.10)] backdrop-blur">
+          <div className="rounded-[2rem] border border-border/60 bg-gradient-to-b from-card/95 to-card/85 p-6 shadow-[0_30px_100px_rgba(15,23,42,0.10)] backdrop-blur dark:shadow-[0_30px_100px_rgba(0,0,0,0.5)]">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Today’s stack</p>
@@ -104,18 +104,18 @@ export default async function Home() {
                 </div>
               ))}
             </div>
-            <div className="mt-8 grid grid-cols-3 gap-4 border-t border-border/60 pt-6 text-sm">
+            <div className="mt-8 grid grid-cols-3 gap-3 border-t border-border/60 pt-6 text-sm sm:gap-4">
               <div>
-                <p className="text-muted-foreground">Completion</p>
-                <p className="mt-1 font-heading text-2xl font-semibold">38%</p>
+                <p className="text-xs text-muted-foreground sm:text-sm">Completion</p>
+                <p className="mt-1 font-heading text-xl font-semibold sm:text-2xl">38%</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Revisit queue</p>
-                <p className="mt-1 font-heading text-2xl font-semibold">11</p>
+                <p className="text-xs text-muted-foreground sm:text-sm">Revisit</p>
+                <p className="mt-1 font-heading text-xl font-semibold sm:text-2xl">11</p>
               </div>
               <div>
-                <p className="text-muted-foreground">This week</p>
-                <p className="mt-1 font-heading text-2xl font-semibold">23</p>
+                <p className="text-xs text-muted-foreground sm:text-sm">This week</p>
+                <p className="mt-1 font-heading text-xl font-semibold sm:text-2xl">23</p>
               </div>
             </div>
           </div>

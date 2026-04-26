@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { AppHeader } from "@/components/app/header";
+import { ThemeProvider } from "@/components/app/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { BRAND } from "@/lib/brand";
 import "./globals.css";
@@ -16,15 +17,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full scroll-smooth antialiased">
+    <html
+      lang="en"
+      className="h-full scroll-smooth antialiased"
+      suppressHydrationWarning
+    >
       <body className="min-h-full bg-background text-foreground">
-        <div className="relative min-h-screen overflow-hidden">
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[radial-gradient(circle_at_top,_rgba(255,106,61,0.16),_transparent_62%)]" />
-          <div className="pointer-events-none absolute right-0 top-32 h-80 w-80 rounded-full bg-[radial-gradient(circle,_rgba(32,178,170,0.12),_transparent_70%)] blur-3xl" />
-          <AppHeader />
-          <main>{children}</main>
-        </div>
-        <Toaster richColors />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="relative min-h-screen overflow-hidden">
+            <div className="pointer-events-none absolute right-0 top-32 h-80 w-80 rounded-full bg-[radial-gradient(circle,_rgba(32,178,170,0.12),_transparent_70%)] blur-3xl" />
+            <AppHeader />
+            <main>{children}</main>
+          </div>
+          <Toaster richColors />
+        </ThemeProvider>
       </body>
     </html>
   );

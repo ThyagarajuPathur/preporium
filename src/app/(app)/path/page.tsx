@@ -14,6 +14,8 @@ import {
 import { getRequiredSession } from "@/lib/session";
 import { cn } from "@/lib/utils";
 
+import { ScrollToHash } from "./scroll-to-hash";
+
 export default async function PathPage() {
   const session = await getRequiredSession();
   const problems = await getWorkspaceProblems(session?.user.id ?? null);
@@ -22,6 +24,7 @@ export default async function PathPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <ScrollToHash />
       <Card className="border-border/60 bg-card/80 shadow-none">
         <CardHeader>
           <CardTitle className="font-heading text-3xl tracking-tight">
@@ -42,7 +45,11 @@ export default async function PathPage() {
           const isOpen = day.dayNumber === recommendedDayNumber;
 
           return (
-            <Card key={day.dayNumber} className="border-border/60 bg-card/80 p-0 shadow-none">
+            <Card
+              key={day.dayNumber}
+              id={`day-${day.dayNumber}`}
+              className="scroll-mt-24 border-border/60 bg-card/80 p-0 shadow-none"
+            >
               <details
                 open={isOpen}
                 className="group/day [&_summary::-webkit-details-marker]:hidden"

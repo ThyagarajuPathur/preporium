@@ -1,18 +1,23 @@
 import type { ComponentType } from "react";
 import Link from "next/link";
 import {
+  ArrowRight,
   ArrowUpRight,
-  ExternalLink,
   Flame,
   Layers2,
   RotateCcw,
   Target,
 } from "lucide-react";
 
-import { ProgressSelect } from "@/components/app/progress-select";
 import { StatusBadge } from "@/components/app/status-badge";
 import { buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { getRecommendedDay, getStatusCount, getWorkspaceProblems } from "@/lib/problems";
 import { getRequiredSession } from "@/lib/session";
@@ -73,6 +78,15 @@ export default async function DashboardPage() {
             <CardTitle className="font-heading text-2xl tracking-tight">
               Today’s recommended set
             </CardTitle>
+            <CardAction>
+              <Link
+                href={`/path#day-${today.dayNumber}`}
+                className={cn(buttonVariants({ size: "sm" }), "rounded-full")}
+              >
+                {today.dayNumber === 1 && solved === 0 ? "Start path" : "Continue path"}
+                <ArrowRight data-icon="inline-end" />
+              </Link>
+            </CardAction>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div>
@@ -87,32 +101,15 @@ export default async function DashboardPage() {
             {today.problems.map((problem) => (
               <div
                 key={problem.id}
-                className="flex flex-col gap-3 rounded-2xl border border-border/60 bg-background/70 px-4 py-4"
+                className="flex items-start justify-between gap-3 rounded-2xl border border-border/60 bg-background/70 px-4 py-4"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate font-medium">
-                      #{problem.leetcodeNumber} {problem.title}
-                    </p>
-                    <p className="text-xs text-muted-foreground">{problem.pattern}</p>
-                  </div>
-                  <StatusBadge status={problem.status} />
+                <div className="min-w-0">
+                  <p className="truncate font-medium">
+                    #{problem.leetcodeNumber} {problem.title}
+                  </p>
+                  <p className="text-xs text-muted-foreground">{problem.pattern}</p>
                 </div>
-                <div className="flex items-center justify-between gap-3">
-                  <ProgressSelect
-                    problemId={problem.id}
-                    initialStatus={problem.status}
-                  />
-                  <Link
-                    href={problem.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={cn(buttonVariants({ size: "sm" }), "rounded-full")}
-                  >
-                    Solve
-                    <ExternalLink data-icon="inline-end" />
-                  </Link>
-                </div>
+                <StatusBadge status={problem.status} />
               </div>
             ))}
           </CardContent>

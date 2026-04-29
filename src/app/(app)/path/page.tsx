@@ -1,6 +1,5 @@
 import { ChevronDown, ExternalLink } from "lucide-react";
 
-import { PathProgressBanner } from "@/components/app/path-progress-banner";
 import { ProgressSelect } from "@/components/app/progress-select";
 import { SolveLink } from "@/components/app/solve-link";
 import { StatusBadge } from "@/components/app/status-badge";
@@ -26,7 +25,6 @@ export default async function PathPage() {
   return (
     <div className="flex flex-col gap-6">
       <ScrollToHash />
-      <PathProgressBanner problems={problems} />
       <Card className="border-border/60 bg-card/80 shadow-none">
         <CardHeader>
           <CardTitle className="font-heading text-3xl tracking-tight">

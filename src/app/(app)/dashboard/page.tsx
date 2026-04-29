@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import Link from "next/link";
+import { format } from "date-fns";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -19,9 +20,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { getPathProgress } from "@/lib/path-progress";
 import { getRecommendedDay, getStatusCount, getWorkspaceProblems } from "@/lib/problems";
 import { getRequiredSession } from "@/lib/session";
 import { cn } from "@/lib/utils";
+
+const dateFormat = "MMM d, yyyy";
 
 export default async function DashboardPage() {
   const session = await getRequiredSession();
@@ -34,6 +38,24 @@ export default async function DashboardPage() {
   const quickList = problems.filter((problem) =>
     problem.status === "in_progress" || problem.status === "revisit",
   );
+
+  const pathProgress = getPathProgress(problems);
+  const startedValue = pathProgress.startDate
+    ? format(pathProgress.startDate, dateFormat)
+    : "Not started";
+  const targetValue = pathProgress.targetDate
+    ? format(pathProgress.targetDate, dateFormat)
+    : "—";
+  const daysLeftValue = !pathProgress.startDate
+    ? "—"
+    : pathProgress.isPastTarget
+      ? "Target passed"
+      : `${pathProgress.daysLeft} ${pathProgress.daysLeft === 1 ? "day" : "days"}`;
+  const forecastValue = pathProgress.forecastDate
+    ? pathProgress.solved >= pathProgress.total
+      ? `Done ${format(pathProgress.forecastDate, dateFormat)}`
+      : format(pathProgress.forecastDate, dateFormat)
+    : "—";
 
   return (
     <div className="flex flex-col gap-8">
@@ -71,6 +93,12 @@ export default async function DashboardPage() {
               </Link>
             </div>
             <Progress value={completion} className="mt-4 h-2" />
+            <div className="mt-4 grid grid-cols-2 gap-2 lg:grid-cols-4">
+              <SmallMetric label="Started" value={startedValue} />
+              <SmallMetric label="Target date" value={targetValue} />
+              <SmallMetric label="Days left" value={daysLeftValue} />
+              <SmallMetric label="On pace for" value={forecastValue} />
+            </div>
           </div>
         </div>
         <Card className="border-border/60 bg-card/80 shadow-none">
@@ -193,6 +221,17 @@ function Metric({
         <Icon className="text-muted-foreground" />
       </div>
       <p className="mt-4 font-heading text-3xl font-semibold">{value}</p>
+    </div>
+  );
+}
+
+function SmallMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-border/60 bg-background/60 px-3 py-2">
+      <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+        {label}
+      </p>
+      <p className="mt-0.5 truncate text-sm font-medium">{value}</p>
     </div>
   );
 }

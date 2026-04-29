@@ -109,7 +109,7 @@ export default async function DashboardPage() {
                   </p>
                   <p className="text-xs text-muted-foreground">{problem.pattern}</p>
                 </div>
-                <StatusBadge status={problem.status} />
+                <StatusBadge status={problem.status} lastUpdatedAt={problem.lastUpdatedAt} />
               </div>
             ))}
           </CardContent>
@@ -142,7 +142,7 @@ export default async function DashboardPage() {
                       Day {problem.dayNumber} · {problem.topic}
                     </p>
                   </div>
-                  <StatusBadge status={problem.status} />
+                  <StatusBadge status={problem.status} lastUpdatedAt={problem.lastUpdatedAt} />
                 </div>
               ))
             ) : (

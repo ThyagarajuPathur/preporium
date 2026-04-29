@@ -16,10 +16,31 @@ const statusStyles: Record<ProgressStatus, string> = {
   revisit: "bg-amber-100 text-amber-700",
 };
 
-export function StatusBadge({ status }: { status: ProgressStatus }) {
+const MS_PER_DAY = 86_400_000;
+
+function formatDaysAgo(iso: string): string | null {
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return null;
+  const days = Math.floor((Date.now() - then) / MS_PER_DAY);
+  if (days < 0) return null;
+  if (days === 0) return "today";
+  if (days === 1) return "1d ago";
+  return `${days}d ago`;
+}
+
+export function StatusBadge({
+  status,
+  lastUpdatedAt,
+}: {
+  status: ProgressStatus;
+  lastUpdatedAt?: string | null;
+}) {
+  const suffix = lastUpdatedAt ? formatDaysAgo(lastUpdatedAt) : null;
+
   return (
     <Badge className={cn("border-0 font-medium", statusStyles[status])}>
       {statusCopy[status]}
+      {suffix ? <span className="ml-1 opacity-70">· {suffix}</span> : null}
     </Badge>
   );
 }

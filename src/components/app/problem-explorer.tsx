@@ -179,7 +179,7 @@ export function ProblemExplorer({
                 </TableCell>
                 <TableCell>{problem.difficulty}</TableCell>
                 <TableCell>
-                  <StatusBadge status={problem.status} />
+                  <StatusBadge status={problem.status} lastUpdatedAt={problem.lastUpdatedAt} />
                 </TableCell>
                 <TableCell>
                   <ProgressSelect

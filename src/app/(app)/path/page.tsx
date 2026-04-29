@@ -97,7 +97,7 @@ export default async function PathPage() {
                             {problem.pattern} · {problem.difficulty}
                           </p>
                         </div>
-                        <StatusBadge status={problem.status} />
+                        <StatusBadge status={problem.status} lastUpdatedAt={problem.lastUpdatedAt} />
                       </div>
                       <div className="flex items-center justify-between gap-3 lg:contents">
                         <ProgressSelect

@@ -195,10 +195,30 @@ export function getTopicBreakdown(problems: ProblemWithProgress[]) {
 export function getRecommendedDay(problems: ProblemWithProgress[]) {
   const grouped = buildProblemDays(problems);
   const fallback = problemDays[0];
+
+  const hasUnsolved = (day: ProblemDay<ProblemWithProgress>) =>
+    day.problems.some((problem) => problem.status !== "solved");
+
+  // Anchor at the latest day the user has actually touched so leftover work
+  // on earlier days doesn't pin the recommendation behind where they are now.
+  let latestActiveIdx = -1;
+  for (let idx = grouped.length - 1; idx >= 0; idx -= 1) {
+    if (
+      grouped[idx].problems.some((problem) => problem.status !== "not_started")
+    ) {
+      latestActiveIdx = idx;
+      break;
+    }
+  }
+
+  const startIdx = Math.max(latestActiveIdx, 0);
+  const fromCurrent = grouped.slice(startIdx).find(hasUnsolved);
+  if (fromCurrent) {
+    return fromCurrent;
+  }
+
   return (
-    grouped.find((entry) =>
-      entry.problems.some((problem) => problem.status !== "solved"),
-    ) ??
+    grouped.find(hasUnsolved) ??
     grouped.at(-1) ?? {
       ...fallback,
       problems: fallback.problems.map((problem) => ({

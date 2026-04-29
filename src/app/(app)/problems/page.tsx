@@ -1,3 +1,4 @@
+import { PathProgressBanner } from "@/components/app/path-progress-banner";
 import { ProblemExplorer } from "@/components/app/problem-explorer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getWorkspaceProblems } from "@/lib/problems";
@@ -9,6 +10,7 @@ export default async function ProblemsPage() {
 
   return (
     <div className="flex flex-col gap-6">
+      <PathProgressBanner problems={problems} />
       <Card className="border-border/60 bg-card/80 shadow-none">
         <CardHeader>
           <CardTitle className="font-heading text-3xl tracking-tight">

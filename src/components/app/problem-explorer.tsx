@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   useDeferredValue,
   useMemo,
@@ -9,6 +8,7 @@ import {
 import { ExternalLink, Search } from "lucide-react";
 
 import { ProgressSelect } from "@/components/app/progress-select";
+import { SolveLink } from "@/components/app/solve-link";
 import { StatusBadge } from "@/components/app/status-badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -188,15 +188,15 @@ export function ProblemExplorer({
                   />
                 </TableCell>
                 <TableCell className="text-right">
-                  <Link
-                    href={problem.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <SolveLink
+                    url={problem.url}
+                    problemId={problem.id}
+                    status={problem.status}
                     className={cn(buttonVariants({ size: "sm" }), "rounded-full")}
                   >
                     Open
                     <ExternalLink data-icon="inline-end" />
-                  </Link>
+                  </SolveLink>
                 </TableCell>
               </TableRow>
             ))}

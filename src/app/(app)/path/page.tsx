@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { ChevronDown, ExternalLink } from "lucide-react";
 
 import { ProgressSelect } from "@/components/app/progress-select";
+import { SolveLink } from "@/components/app/solve-link";
 import { StatusBadge } from "@/components/app/status-badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -104,10 +104,10 @@ export default async function PathPage() {
                           problemId={problem.id}
                           initialStatus={problem.status}
                         />
-                        <Link
-                          href={problem.url}
-                          target="_blank"
-                          rel="noreferrer"
+                        <SolveLink
+                          url={problem.url}
+                          problemId={problem.id}
+                          status={problem.status}
                           className={cn(
                             buttonVariants({ variant: "ghost" }),
                             "rounded-full",
@@ -115,7 +115,7 @@ export default async function PathPage() {
                         >
                           Solve
                           <ExternalLink data-icon="inline-end" />
-                        </Link>
+                        </SolveLink>
                       </div>
                     </div>
                   ))}
